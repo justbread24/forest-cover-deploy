@@ -42,19 +42,19 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.subheader("🌄 Terrain Features")
-    elevation = st.number_input("Elevation (meters)", 1800.0, 3900.0, 3000.0, 1)
-    aspect = st.number_input("Aspect (0-360°)", 0, 360, 150, 1)
+    elevation = st.number_input("Elevation (meters)", 1800.0, 3900.0, 3000.0, 1.0)
+    aspect = st.number_input("Aspect (0-360°)", 0.0, 360.0, 150.0, 1.0)
     slope = st.number_input("Slope (degrees)", 0.0, 66.0, 15.0, 0.1)
-    horiz_hyd = st.number_input("Horizontal Distance to Hydrology (meters)", 0.0, 1400.0, 200.0, 1)
-    vert_hyd = st.number_input("Vertical Distance to Hydrology (meters)", -170.0, 400.0, 0.0, 1)
-    horiz_road = st.number_input("Horizontal Distance to Roadways (meters)", 0.0, 7100.0, 500.0, 1)
-    
+    horiz_hyd = st.number_input("Horizontal Distance to Hydrology (meters)", 0.0, 1400.0, 200.0, 1.0)
+    vert_hyd = st.number_input("Vertical Distance to Hydrology (meters)", -170.0, 400.0, 0.0, 1.0)
+    horiz_road = st.number_input("Horizontal Distance to Roadways (meters)", 0.0, 7100.0, 500.0, 1.0)
+
 with col2:
     st.subheader("☀️ Hillshade & Fire")
-    hillshade_9am = st.number_input("Hillshade 9am (0-255)", 0, 254, 200, 1)
-    hillshade_noon = st.number_input("Hillshade Noon (0-255)", 0, 254, 210, 1)
-    hillshade_3pm = st.number_input("Hillshade 3pm (0-255)", 0, 254, 190, 1)
-    fire_dist = st.number_input("Horizontal Distance to Fire Points (meters)", 0.0, 7200.0, 800.0, 1)
+    hillshade_9am = st.number_input("Hillshade 9am (0-255)", 0.0, 254.0, 200.0, 1.0)
+    hillshade_noon = st.number_input("Hillshade Noon (0-255)", 0.0, 254.0, 210.0, 1.0)
+    hillshade_3pm = st.number_input("Hillshade 3pm (0-255)", 0.0, 254.0, 190.0, 1.0)
+    fire_dist = st.number_input("Horizontal Distance to Fire Points (meters)", 0.0, 7200.0, 800.0, 1.0)
 
 # Wilderness Areas (binary 0/1)
 st.subheader("🏞️ Wilderness Area (select one)")
