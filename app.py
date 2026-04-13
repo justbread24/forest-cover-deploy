@@ -6,7 +6,7 @@ import joblib
 # Load your trained model (cached for speed)
 @st.cache_resource
 def load_model():
-    return joblib.load("smote_rf_streamlit.joblib")  # New filename
+    return joblib.load("final_model.joblib")  # ← EXACT filename
 
 st.set_page_config(page_title="Forest Cover Predictor", page_icon="🌲", layout="wide")
 
