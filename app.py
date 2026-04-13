@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
+import shap
 
 # Load your trained model (cached for speed)
 @st.cache_resource
@@ -94,7 +95,64 @@ if st.button("🌲 Predict Forest Cover Type", type="primary"):
     st.bar_chart(prob_df.set_index("Cover Type"))
     
     st.caption("Cover Types: 1-Spruce/Fir, 2-Lodgepole Pine, 3-Ponderosa Pine, 4-Cottonwood/Willow, 5-Aspen, 6-Douglas-fir, 7-Krummholz")
+#########################################################################
+if st.button("🌲 Predict Forest Cover Type", type="primary"):
+    with st.spinner("Predicting..."):
+        prediction = model.predict(input_df)[0]
+        probabilities = model.predict_proba(input_df)[0]
 
+    st.success(f"**Predicted Cover Type: {int(prediction)}**")
+
+    # Show probabilities as before
+    st.subheader("Prediction Confidence")
+    prob_df = pd.DataFrame({
+        "Cover Type": range(1, 8),
+        "Probability": probabilities
+    }).sort_values("Probability", ascending=False)
+
+    st.bar_chart(prob_df.set_index("Cover Type"))
+
+    # === EXPLANATION SECTION ===
+    st.subheader("🔍 Why this cover type?")
+
+    # Extract the trained Random Forest from the pipeline
+    rf_clf = model.named_steps["clf"]
+
+    # Fit SHAP explainer (first time will be cached; for demo we simplify)
+    shap_explainer = shap.TreeExplainer(rf_clf)
+    shap_values = shap_explainer.shap_values(input_df)
+
+    # Pick the output for the predicted class
+    pred_class = int(prediction) - 1  # 0‑indexed for multiclass
+    shap_df = pd.DataFrame(
+        shap_values[pred_class],
+        columns=input_df.columns
+    ).T
+    shap_df.columns = ["SHAP_value"]
+    shap_df["abs_SHAP"] = shap_df["SHAP_value"].abs()
+    shap_df = shap_df.sort_values("abs_SHAP", ascending=False).head(10)
+
+    st.write("Top 10 features influencing this prediction:")
+    st.write(shap_df)
+
+    # Simple bar chart of SHAP values
+    st.bar_chart(shap_df["SHAP_value"])
+
+    # Optional: short text explanation (customize per feature)
+    top_feat = shap_df.index[0]
+    if "Elevation" in top_feat:
+        st.caption("High elevation strongly pushes the model toward Spruce/Fir or Krummholz cover types.")
+    elif "Aspect" in top_feat:
+        st.caption("Aspect (sun exposure) is a key driver of vegetation type in this region.")
+    elif "Slope" in top_feat:
+        st.caption("Steep slope often favors certain conifer types over others.")
+    else:
+        st.caption("This feature is pulling the prediction toward the selected cover type.")
+
+    st.caption("SHAP values show how much each feature pushes the prediction toward the chosen cover type (positive) or away from it (negative).")
+
+    st.caption("Cover Types: 1-Spruce/Fir, 2-Lodgepole Pine, 3-Ponderosa Pine, 4-Cottonwood/Willow, 5-Aspen, 6-Douglas‑fir, 7-Krummholz")
+#########################################################################
 # Sidebar info
 with st.sidebar:
     st.info("**Model**: SMOTE + Random Forest (50 trees)")
